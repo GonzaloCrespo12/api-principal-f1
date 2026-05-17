@@ -16,11 +16,12 @@ public class Carrera {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincremental
     private Long id;
 
-    @Column(name = "nombre_gp", nullable = false) // Mapeo de snake_case a camelCase
+    @Column(name = "nombre_gp", nullable = false, unique = true) // Mapeo de snake_case a camelCase
     private String nombreGp;
 
-    @Column(nullable = false)
-    private String pais;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pais_id", nullable = false)
+    private Pais pais;
 
     @Column(name = "longitud_km", nullable = false)
     private Float longitudKm; // Float para coincidir con el tipo float de la BD

@@ -2,6 +2,9 @@
 package com.f1.api_principal.repository;
 
 import com.f1.api_principal.entity.Usuario;
+
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
     // Aquí podrías agregar búsquedas personalizadas más adelante, por ejemplo:
-    // <Usuario> findByUsername(String username);
+    Optional<Usuario> findByUsername(String username); // Método para buscar un usuario por su nombre de usuario
 }

@@ -27,6 +27,10 @@ public class Usuario {
     @Column(name = "actualizado_en")
     private LocalDateTime actualizadoEn;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "escuderia_id", unique = true)
+    private Escuderia escuderia;
+
     // Métodos automáticos para las fechas
     @PrePersist
     protected void onCreate() {

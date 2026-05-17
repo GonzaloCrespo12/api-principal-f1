@@ -22,20 +22,26 @@ public class Piloto {
     @Column(nullable = false, length = 3) // Las siglas suelen ser 3 letras (ej: VER, HAM)
     private String siglas;
 
-    private String nacionalidad;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pais_id")
+    private Pais pais;
 
-    @Column(name = "numero_piloto")
-    private Integer numeroPiloto;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "numero_id", unique = true)
+    private NumeroPiloto numero;
 
     @Enumerated(EnumType.STRING)
     private RolPiloto rol;
 
     private Integer prioridad;
 
-    // --- RELACIÓN ---
-    @ManyToOne(fetch = FetchType.LAZY) // Muchos pilotos pertenecen a una escudería
-    @JoinColumn(name = "escuderia_id") // Nombre de la FK en la tabla de la BD
+    @ManyToOne(fetch = FetchType.LAZY) 
+    @JoinColumn(name = "escuderia_id") 
     private Escuderia escuderia;
+
+    @Column(name = "estado", columnDefinition = "boolean default true")
+    private Boolean estado = true; // Por defecto un piloto nace "activo"
 
     @Column(name = "creado_en", updatable = false)
     private LocalDateTime creadoEn;

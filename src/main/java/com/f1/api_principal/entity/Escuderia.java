@@ -17,19 +17,20 @@ public class Escuderia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // NN (Not Null) según tu DER
+    @Column(nullable = false, unique = true) // El nombre de la escudería no puede ser nulo ni repetido
     private String nombre;
 
-    @Column(name = "pais_origen") // Vincula la variable camelCase con la columna snake_case
-    private String paisOrigen;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pais_id") 
+    private Pais pais;
 
     @Column(name = "jefe_equipo")
     private String jefeEquipo;
 
     @Column(name = "anio_fundacion")
-    private Integer anioFundacion; // Usamos la clase Integer en lugar del tipo primitivo int
+    private Integer anioFundacion; 
 
-    @ManyToOne(fetch = FetchType.LAZY) // Muchas escuderías pueden usar un motorista
+    @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "motorista_id") 
     private Motorista motorista;
 
