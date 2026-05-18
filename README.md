@@ -1,44 +1,165 @@
-# 🏎️ F1 API REST
+# 🏎️ F1 Team Manager — API REST (Sistema SaaS)
 
-## 1. Contexto del Proyecto y Modelo de Negocio
-Esta API REST no es un simple gestor de datos públicos, sino el "motor" de un sistema SaaS (Software as a Service) diseñado para la gestión de equipos de Fórmula 1. 
-
-**Rol del Usuario:**
-Cada usuario autenticado en el sistema asume el rol de **Director de Equipo (Team Principal)** de una escudería específica. La arquitectura garantiza que un usuario solo tenga permisos (Autorización) para gestionar los recursos, pilotos y configuraciones de su propia escudería, manteniendo el ecosistema competitivo aislado y seguro.
+Backend completo para una plataforma SaaS orientada a la gestión estratégica de escuderías de Fórmula 1. Implementa una arquitectura desacoplada en capas, seguridad perimetral por tokens JWT y aislamiento estricto de recursos por director de equipo.
 
 ---
 
-## 2. Arquitectura de Datos y Decisiones de Diseño
-El esquema de la base de datos ha sido diseñado aplicando la Tercera Forma Normal (3NF) para garantizar la integridad referencial y evitar la redundancia de datos. Consta de 8 entidades estratégicamente relacionadas:
+## 📋 Índice
 
-### A. Capa de Seguridad y Dominio (Relación 1:1)
-* **Usuario y Escudería:** Se separó la lógica de autenticación de la lógica de negocio. La tabla `usuario` maneja credenciales y tokens JWT, vinculándose a una `escuderia` mediante una relación estricta de 1 a 1 (`escuderia_id`). Esto protege los datos del equipo de filtraciones de credenciales.
-
-### B. Integridad Histórica (La Relación Compleja)
-* **Entidad Resultado:** Para resolver la relación de Muchos a Muchos entre `Piloto` y `Carrera`, se implementó `Resultado` como una **Entidad de Asociación**. Su principal objetivo arquitectónico es doble:
-    1. **Congelar el historial de mercado:** Al guardar el `escuderia_id` en el momento de la carrera, permite que los pilotos sean transferidos de equipo en el futuro (Mercado de Pases) sin alterar el historial del pasado.
-    2. **Registro Histórico de Constructores:** Actúa como el libro mayor o historial permanente de la escudería. Permite consultar el rendimiento exacto, posiciones y puntos obtenidos por el equipo en cada Gran Premio a lo largo del tiempo, independientemente de qué pilotos conducían los monoplazas en esa temporada.
-
-### C. Normalización y Tablas Maestras
-Para evitar inconsistencias de entrada de datos, se extrajeron atributos clave a tablas maestras:
-* **País:** Centraliza la geografía de Circuitos, Escuderías y Pilotos.
-* **Motorista:** Catálogo de proveedores de unidades de potencia, evitando errores tipográficos en las escuderías.
-* **Número de Piloto:** Gestiona los dorsales permitiendo saber si un número está disponible o ya pertenece a la parrilla actual.
+1. [Contexto y Modelo de Negocio](#contexto)
+2. [Arquitectura de Software](#arquitectura)
+3. [Diseño de Base de Datos](#base-de-datos)
+4. [Reglas de Negocio](#reglas-de-negocio)
+5. [Stack Tecnológico](#stack)
+6. [Guía de Ejecución](#ejecución)
+7. [Endpoints Principales](#endpoints)
+8. [Testing](#testing)
 
 ---
 
-## 3. Stack Tecnológico y Reglas de Negocio
+## 📌 Contexto y Modelo de Negocio <a name="contexto"></a>
 
-### Tecnologías Utilizadas
-* **Lenguaje:** Java 21
-* **Framework:** Spring Boot 3.x
-* **Seguridad:** Spring Security con JSON Web Tokens (JWT)
-* **Persistencia:** Spring Data JPA / Hibernate
-* **Base de Datos:** MySQL
-* **Validaciones:** Spring Boot Starter Validation
+Esta API no es un simple catálogo de lectura de datos, sino un **sistema transaccional** donde cada usuario autenticado asume el rol de **Director de Equipo (Team Principal)** de una escudería específica.
 
-### Reglas de Negocio Principales (Lógica en Services)
-1.  **Aislamiento de Mánager:** Un usuario autenticado solo puede ejecutar métodos `PUT` o `POST` sobre pilotos que pertenezcan a la `escuderia_id` vinculada a su token.
-2.  **Asignación de Dorsales:** Al registrar un *nuevo* piloto en el sistema, el motor valida en la tabla `numero_piloto` que el dorsal elegido tenga el estado `esta_disponible = true`. Durante una transferencia de equipo, el piloto simplemente conserva su dorsal personal.
-3.  **Inmutabilidad del Pasado:** Los registros en la tabla `Resultado` no se eliminan al transferir a un piloto. Las carreras finalizadas son registros históricos de solo lectura.
-4.  **Baja de Pilotos (DELETE):** Solo se permite eliminar físicamente (Hard Delete) a un piloto si este no posee registros asociados en la tabla `Resultado` (ej. un piloto creado por error).
+### 🛡️ Regla de Oro: Aislamiento de Mánager
+
+La arquitectura de seguridad garantiza el aislamiento total entre competidores. El sistema extrae el identificador único del equipo (`escuderia_id`) directamente desde el token **JWT** enviado en las cabeceras HTTP. Ningún mánager puede registrar, modificar ni eliminar pilotos pertenecientes a escuderías rivales.
+
+---
+
+## 🏛️ Arquitectura de Software <a name="arquitectura"></a>
+
+La aplicación sigue una **Arquitectura Multicapa** estricta:
+
+```
+Controller → Service → Repository
+```
+
+Para desacoplar la base de datos de la capa de presentación se implementaron **DTOs (Data Transfer Objects)**:
+
+| DTO | Rol |
+|---|---|
+| `PilotoRequestDTO` | Entrada de datos con validaciones estrictas (`@NotBlank`, `@Size`, `@Min`) |
+| `PilotoResponseDTO` | Salida limpia hacia el cliente, transforma relaciones en tipos legibles |
+
+> **Nota:** El uso de DTOs planos neutraliza los errores de serialización cíclica (JSON infinito) generados por relaciones bidireccionales de Hibernate.
+
+---
+
+## 📊 Diseño de Base de Datos <a name="base-de-datos"></a>
+
+El esquema de persistencia se modeló aplicando la **Tercera Forma Normal (3NF)** en MySQL, con **8 entidades** estratégicamente relacionadas.
+
+![Esquema de Base de Datos 3NF](API-f1.png)
+
+### Decisiones Arquitectónicas Clave
+
+**A. Capa de Seguridad y Dominio (Relación 1:1)**
+
+La tabla `usuario` maneja exclusivamente credenciales y se vincula mediante una clave foránea única (`escuderia_id`) a su escudería. Esto aísla la lógica de autenticación de la lógica de negocio.
+
+**B. Integridad Histórica — Entidad `Resultado` (Relación N:M)**
+
+Resuelve la relación Muchos a Muchos entre `Piloto` y `Carrera` actuando como entidad de asociación con doble propósito:
+
+1. **Congelar el historial de mercado:** Persiste el `escuderia_id` en el momento exacto de cada carrera. Los pilotos pueden ser transferidos en el futuro sin alterar el historial de puntos de su antiguo equipo.
+2. **Libro mayor de constructores:** Permite consultar el rendimiento exacto del equipo en cada Gran Premio a lo largo del tiempo, independientemente de qué pilotos conducían en esa temporada.
+
+**C. Tablas Maestras (Normalización)**
+
+| Tabla | Propósito |
+|---|---|
+| `pais` | Centraliza la geografía de Circuitos, Escuderías y Pilotos |
+| `motorista` | Catálogo de proveedores de unidades de potencia |
+| `numero_piloto` | Gestiona dorsales y su disponibilidad en la parrilla actual |
+
+---
+
+## ⚙️ Reglas de Negocio <a name="reglas-de-negocio"></a>
+
+Toda la lógica de negocio reside en la **capa Service**:
+
+1. **Aislamiento de Mánager:** Un usuario autenticado solo puede ejecutar operaciones `POST` o `PUT` sobre pilotos cuya `escuderia_id` coincida con la registrada en su token JWT.
+
+2. **Reserva Automática de Dorsal:** Al registrar un nuevo piloto, el sistema valida en la tabla `numero_piloto` que el dorsal elegido tenga `esta_disponible = true`. Tras la asignación, el dorsal pasa a `false`. En transferencias de equipo, el piloto conserva su número personal.
+
+3. **Inmutabilidad del Pasado:** Los registros en `Resultado` nunca se eliminan. Las carreras finalizadas son registros históricos de solo lectura.
+
+4. **Política de Eliminación (Hard Delete):** Solo se permite eliminar físicamente a un piloto si **no posee registros** en la tabla `Resultado`. Si ya compitió, el sistema lanza una excepción para preservar la integridad estadística.
+
+---
+
+## 🛠️ Stack Tecnológico <a name="stack"></a>
+
+| Componente | Tecnología |
+|---|---|
+| Lenguaje | Java 21 |
+| Framework | Spring Boot 3.x |
+| Seguridad | Spring Security + JWT |
+| ORM | Spring Data JPA / Hibernate |
+| Base de Datos | MySQL |
+| Validaciones | Spring Boot Starter Validation |
+| Testing | JUnit 5, Mockito, Spring MockMvc |
+
+---
+
+## 🚀 Guía de Ejecución <a name="ejecución"></a>
+
+### Requisitos Previos
+
+- **Java 21** instalado y configurado en el PATH.
+- Instancia activa de **MySQL Server** (phpMyAdmin, Workbench u otro cliente).
+
+### 1. Configurar Base de Datos
+
+Localice `src/main/resources/application.properties` y adapte las credenciales:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/f1_manager?useSSL=false&serverTimezone=UTC
+spring.datasource.username=tu_usuario
+spring.datasource.password=tu_contraseña
+
+# Hibernate creará las 8 tablas automáticamente al iniciar
+spring.jpa.hibernate.ddl-auto=update
+```
+
+### 2. Compilar y Ejecutar
+
+```bash
+mvn spring-boot:run
+```
+
+Verificar que la terminal muestre:
+```
+Tomcat started on port(s): 8080
+```
+
+---
+
+## 🎛️ Endpoints Principales <a name="endpoints"></a>
+
+> Todos los endpoints (excepto `/api/auth/login`) requieren autenticación activa mediante `Authorization: Bearer <TOKEN_JWT>` en las cabeceras HTTP.
+
+| Método | Endpoint | Descripción | Respuesta |
+|---|---|---|---|
+| `POST` | `/api/auth/login` | Autenticación. Devuelve el Token JWT. | `200 OK` |
+| `GET` | `/api/pilotos` | Lista los pilotos de la escudería del mánager logueado. | `200 OK` |
+| `POST` | `/api/pilotos` | Registra un nuevo piloto validando DTOs y dorsal. | `201 Created` |
+| `PUT` | `/api/pilotos/{id}` | Actualiza datos de un piloto de la propia escudería. | `200 OK` |
+| `DELETE` | `/api/pilotos/{id}` | Elimina un piloto si no posee historial de carreras. | `204 No Content` |
+
+---
+
+## 🧪 Testing <a name="testing"></a>
+> **Nota técnica** El entorno de pruebas está completamente aislado de la capa de persistencia mediante inyección de *Mocks* (Mockito y `@MockitoBean`). Esto garantiza que los tests unitarios y de integración puedan ejecutarse de forma ultrarrápida sin necesidad de tener el motor de MySQL encendido ni afectar los datos reales.
+
+Para ejecutar el laboratorio de pruebas automatizadas:
+
+```bash
+mvn test
+```
+
+| Tipo | Herramienta | Qué valida |
+|---|---|---|
+| **Unitarias (Service)** | JUnit 5 + Mockito | Reglas de negocio: eliminación, aislamiento, asignación de dorsales |
+| **Integración (Controller)** | MockMvc + `@WithMockUser` | Peticiones HTTP simuladas sorteando Spring Security de forma controlada |

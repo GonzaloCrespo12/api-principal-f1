@@ -55,16 +55,16 @@ VALUES ('Alpine', 7, 'Steve Nielsen', 2021, 3, 'CLIENTE', NOW(), NOW());
 -- =========================================================================
 
 -- 1. Usuarios (Directores de Equipo vinculados 1:1 a su escudería)
--- NOTA TÉCNICA: En producción, estos passwords DEBEN estar hasheados con BCrypt. 
--- Para esta prueba inicial pondremos '1234' para que puedas probar el login luego.
+-- NOTA TÉCNICA:  estos passwords estan hasheados con BCrypt. 
+-- '12345678' es el password original
 INSERT IGNORE INTO usuario (username, password, escuderia_id, fecha_registro, actualizado_en)
-VALUES ('james_vowles', '1234', 1, NOW(), NOW());
+VALUES ('james_vowles', '$2a$10$pe91Z8pFZS.Qh9lUcHXlauVF492NKmFww6z9GcK/CwuRk5S/NlTfm', 1, NOW(), NOW());
 
 INSERT IGNORE INTO usuario (username, password, escuderia_id, fecha_registro, actualizado_en)
-VALUES ('fred_vasseur', '1234', 2, NOW(), NOW());
+VALUES ('fred_vasseur', '$2a$10$pe91Z8pFZS.Qh9lUcHXlauVF492NKmFww6z9GcK/CwuRk5S/NlTfm', 2, NOW(), NOW());
 
 INSERT IGNORE INTO usuario (username, password, escuderia_id, fecha_registro, actualizado_en)
-VALUES ('flavio_briatore', '1234', 3, NOW(), NOW());
+VALUES ('flavio_briatore', '$2a$10$pe91Z8pFZS.Qh9lUcHXlauVF492NKmFww6z9GcK/CwuRk5S/NlTfm', 3, NOW(), NOW());
 
 -- 2. Carreras Históricas (Catálogo de consulta)
 INSERT IGNORE INTO carrera (nombre_gp, pais_id, longitud_km, vueltas, es_sprint, fecha, nombre_circuito, creado_en)
