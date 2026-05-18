@@ -139,6 +139,8 @@ spring.sql.init.mode=always
 
 ### 2. Compilar y Ejecutar
 
+# Importante
+Debe estar corriendo xampp con apache y MySQL para que compile correctamente
 ```bash
 mvn spring-boot:run 
 ```
