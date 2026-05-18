@@ -115,18 +115,36 @@ Toda la lógica de negocio reside en la **capa Service**:
 Localice `src/main/resources/application.properties` y adapte las credenciales:
 
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/f1_manager?useSSL=false&serverTimezone=UTC
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
+spring.application.name=api-principal
 
-# Hibernate creará las 8 tablas automáticamente al iniciar
+# Archivo: src/main/resources/application.properties
+
+# Configuración de la conexión a MySQL/MariaDB
+spring.datasource.url=jdbc:mysql://localhost:3306/f1_api_db?createDatabaseIfNotExist=true&serverTimezone=UTC
+spring.datasource.username=root
+spring.datasource.password=
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Configuración de Hibernate (traductor de Java a SQL)
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.open-in-view=false
+
+# Spring Espera a que Hibernate cree las tablas antes de meter datos
+spring.jpa.defer-datasource-initialization=true
+
+# Spring Siempre ejecuta el archivo data.sql al arrancar
+spring.sql.init.mode=always
 ```
 
 ### 2. Compilar y Ejecutar
 
 ```bash
-mvn spring-boot:run
+mvn spring-boot:run 
+```
+o 
+```bash
+mvnw spring-boot:run 
 ```
 
 Verificar que la terminal muestre:

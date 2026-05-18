@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/config/SecurityConfig.java
 package com.f1.api_principal.config;
 
 import com.f1.api_principal.security.JwtFilter;
@@ -18,9 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final JwtFilter jwtFilter; // <--- NUEVO: Inyectamos el filtro
+    private final JwtFilter jwtFilter; // Inyectamos el filtro
 
-    public SecurityConfig(JwtFilter jwtFilter) { // <--- NUEVO: Constructor
+    public SecurityConfig(JwtFilter jwtFilter) { // Constructor
         this.jwtFilter = jwtFilter;
     }
 
@@ -36,7 +35,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             
             .authorizeHttpRequests(auth -> auth
-                //  LA LLAVE MÁGICA: Permitimos que Spring te muestre los errores internos
+                //  Permitimos que Spring muestre los errores internos
                 .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                 
                 //  Permitimos explícitamente el registro

@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/service/EscuderiaService.java
 package com.f1.api_principal.service;
 
 import com.f1.api_principal.dto.response.EscuderiaResponseDTO;
@@ -23,7 +22,7 @@ public class EscuderiaService {
         this.escuderiaMapper = escuderiaMapper;
     }
 
-    // Listar todas [cite: 739]
+    // Listar todas
     public List<EscuderiaResponseDTO> obtenerTodas() {
         return escuderiaRepository.findAll()
                 .stream()
@@ -31,7 +30,7 @@ public class EscuderiaService {
                 .collect(Collectors.toList());
     }
 
-    // Buscar por ID [cite: 741, 927-929]
+    // Buscar por ID
     public EscuderiaResponseDTO obtenerPorId(Long id) {
         Escuderia escuderia = escuderiaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Escudería no encontrada con ID: " + id));

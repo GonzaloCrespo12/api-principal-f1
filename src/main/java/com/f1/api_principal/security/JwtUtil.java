@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/security/JwtUtil.java
 package com.f1.api_principal.security;
 
 import io.jsonwebtoken.Jwts;
@@ -9,10 +8,10 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 
-@Component // Le indica a Spring que administre esta clase para poder usarla en otros lados
+@Component // indica a Spring que administre esta clase para poder usarla en otros lados
 public class JwtUtil {
 
-    // Generamos una clave secreta criptográfica segura para firmar los tokens
+    // generacion de clave secreta criptográfica segura para firmar los tokens
     private final Key secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     
     // Tiempo de validez del token: 1 día (en milisegundos)
@@ -21,11 +20,11 @@ public class JwtUtil {
     // Método para fabricar el token JWT
     public String generarToken(String username) {
         return Jwts.builder()
-                .setSubject(username) // Guardamos quién es el usuario
+                .setSubject(username) // Guardamos el usuario
                 .setIssuedAt(new Date()) // Fecha de creación
                 .setExpiration(new Date(System.currentTimeMillis() + tiempoExpiracion)) // Fecha de vencimiento
-                .signWith(secretKey) // Firmamos el token con nuestra clave secreta
-                .compact(); // Lo armamos en un solo String listo para enviar
+                .signWith(secretKey) // Firmael token con clave secreta
+                .compact(); // armamos en un solo String listo para enviar
     }
 
     // Extrae el nombre de usuario que guardamos dentro del token

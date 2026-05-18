@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/controller/PilotoController.java
 package com.f1.api_principal.controller;
 
 import com.f1.api_principal.dto.request.PilotoRequestDTO;
@@ -22,53 +21,53 @@ public class PilotoController {
     private final PilotoService pilotoService;
     private final UsuarioService usuarioService;
 
-    // 1. CREAR UN PILOTO
+    // CREAR UN PILOTO
     @PostMapping 
     public ResponseEntity<PilotoResponseDTO> crear(@Valid @RequestBody PilotoRequestDTO dto) { 
-        // 🔒 Obtenemos la escudería directamente del Token JWT
+        // Obtenemos la escudería directamente del Token JWT
         Long managerEscuderiaId = usuarioService.obtenerEscuderiaIdDelUsuarioAutenticado();
         
         PilotoResponseDTO nuevoPiloto = pilotoService.crearPiloto(dto, managerEscuderiaId);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPiloto); 
     }
 
-    // 2. OBTENER TODOS LOS PILOTOS DE MI ESCUDERÍA
+    //  OBTENER TODOS LOS PILOTOS DE MI ESCUDERÍA
     @GetMapping 
     public ResponseEntity<List<PilotoResponseDTO>> listarTodos() {
-        // 🔒 Obtenemos la escudería directamente del Token JWT
+        // Obtenemos la escudería directamente del Token JWT
         Long managerEscuderiaId = usuarioService.obtenerEscuderiaIdDelUsuarioAutenticado();
         
         List<PilotoResponseDTO> pilotos = pilotoService.obtenerPilotosPorEscuderia(managerEscuderiaId);
         return ResponseEntity.ok(pilotos); 
     }
 
-    // 3. OBTENER UN PILOTO POR SU ID
+    // OBTENER UN PILOTO POR SU ID
     @GetMapping("/{id}") 
     public ResponseEntity<PilotoResponseDTO> obtenerPorId(@PathVariable Long id) {
-        // 🔒 Obtenemos la escudería directamente del Token JWT
+        //  Obtenemos la escudería directamente del Token JWT
         Long managerEscuderiaId = usuarioService.obtenerEscuderiaIdDelUsuarioAutenticado();
         
         PilotoResponseDTO piloto = pilotoService.obtenerPilotoPorId(id, managerEscuderiaId);
         return ResponseEntity.ok(piloto); 
     }
 
-    // 4. ACTUALIZAR UN PILOTO
+    //  ACTUALIZAR UN PILOTO
     @PutMapping("/{id}") 
     public ResponseEntity<PilotoResponseDTO> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody PilotoRequestDTO dto) {
         
-        // 🔒 Obtenemos la escudería directamente del Token JWT
+        // Obtenemos la escudería directamente del Token JWT
         Long managerEscuderiaId = usuarioService.obtenerEscuderiaIdDelUsuarioAutenticado();
         
         PilotoResponseDTO actualizado = pilotoService.actualizarPiloto(id, dto, managerEscuderiaId);
         return ResponseEntity.ok(actualizado); 
     }
 
-    // 5. ELIMINAR UN PILOTO 
+    //  ELIMINAR UN PILOTO 
     @DeleteMapping("/{id}") 
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        // 🔒 Obtenemos la escudería directamente del Token JWT
+        //  Obtenemos la escudería directamente del Token JWT
         Long managerEscuderiaId = usuarioService.obtenerEscuderiaIdDelUsuarioAutenticado();
         
         pilotoService.eliminarPiloto(id, managerEscuderiaId);

@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/controller/UsuarioController.java
 package com.f1.api_principal.controller;
 
 import java.util.Collections;
@@ -18,7 +17,7 @@ import com.f1.api_principal.service.UsuarioService;
 
 import jakarta.validation.Valid;
 
-@RestController // Indica que esta clase maneja peticiones web y devuelve JSON 
+@RestController // esta clase maneja peticiones web y devuelve JSON 
 @RequestMapping("/api/usuarios") // Define la ruta base para este controlador 
 public class UsuarioController {
 
@@ -33,20 +32,19 @@ public class UsuarioController {
     @PostMapping("/registro")
     public ResponseEntity<UsuarioResponseDTO> registrarUsuario(@Valid @RequestBody UsuarioCreateDTO dto) {
         
-        // Llamamos a la lógica de negocio que creaste antes
+        // Llamamos a la lógica de negocio 
         UsuarioResponseDTO usuarioCreado = usuarioService.registrarUsuario(dto);
         
         // Devolvemos el usuario creado con un código 201 (Created) 
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCreado);
     }
 
-    // Pega este método debajo de tu método de registrarUsuario
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@Valid @RequestBody UsuarioLoginDTO dto) {
         // Llamamos al servicio para que valide y genere el token
         String token = usuarioService.login(dto);
         
-        // Devolvemos el token dentro de un JSON estructurado de forma prolija: {"token": "ey..."}
+        // Devolvemos el token dentro de un JSON estructurado
         return ResponseEntity.ok(Collections.singletonMap("token", token));
     }
 }

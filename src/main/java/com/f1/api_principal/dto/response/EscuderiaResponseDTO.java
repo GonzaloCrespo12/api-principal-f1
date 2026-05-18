@@ -10,7 +10,7 @@ public class EscuderiaResponseDTO {
     private Integer anioFundacion;
     private String tipoMotorista;
     
-    // Aplanamos las relaciones para entregar texto limpio al cliente
+    // Aplana las relaciones para entregar texto limpio al cliente
     private String nombrePais;
     private String nombreMotorista;
 }

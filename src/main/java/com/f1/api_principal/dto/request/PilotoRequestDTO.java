@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/dto/request/PilotoRequestDTO.java
 package com.f1.api_principal.dto.request;
 
 import jakarta.validation.constraints.*;
@@ -32,6 +31,6 @@ public class PilotoRequestDTO {
     @Max(value = 3, message = "La prioridad máxima es 3")
     private Integer prioridad;
     
-    // No incluimos escuderiaId porque la obtendremos del token del Team Principal.
-    // No incluimos estado porque por defecto al crear es true.
+    // No se incluye escuderiaId porque la obtendremos del token del Team Principal.
+    // No se incluye estado porque por defecto al crear es true.
 }

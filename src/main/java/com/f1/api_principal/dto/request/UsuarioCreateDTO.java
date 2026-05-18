@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/dto/UsuarioCreateDTO.java
 package com.f1.api_principal.dto.request;
 
 import jakarta.validation.constraints.NotBlank;

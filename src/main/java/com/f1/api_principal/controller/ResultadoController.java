@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/controller/ResultadoController.java
 package com.f1.api_principal.controller;
 
 import com.f1.api_principal.dto.response.ResultadoResponseDTO;
@@ -20,6 +19,6 @@ public class ResultadoController {
             @RequestHeader("X-Escuderia-Id") Long managerEscuderiaId) {
         
         List<ResultadoResponseDTO> historial = resultadoService.obtenerHistorialPorEscuderia(managerEscuderiaId);
-        return ResponseEntity.ok(historial); // Devuelve el historial en formato JSON con un 200 OK [cite: 200]
+        return ResponseEntity.ok(historial); // Devuelve el historial en formato JSON con un 200 OK
     }
 }

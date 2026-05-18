@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/service/PilotoService.java
 package com.f1.api_principal.service;
 
 import com.f1.api_principal.dto.request.PilotoRequestDTO;
@@ -19,11 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service // Marca la clase como un componente de lógica de negocio en Spring [cite: 213]
+@Service // Marca la clase como un componente de lógica de negocio en Spring 
 @RequiredArgsConstructor // Lombok crea un constructor con todas las variables "final" automáticamente
 public class PilotoService {
 
-    // Inyección de dependencias: El Service necesita hablar con varios repositorios y el mapper [cite: 255-259]
+    // Inyección de dependencias: El Service necesita hablar con varios repositorios y el mapper 
     private final PilotoRepository pilotoRepository;
     private final PaisRepository paisRepository;
     private final NumeroPilotoRepository numeroPilotoRepository;
@@ -102,13 +101,13 @@ public class PilotoService {
         // Buscamos solo los pilotos que pertenecen a esta escudería y que estén activos (estado = true)
         List<Piloto> pilotos = pilotoRepository.findAllByEscuderiaIdAndEstadoTrue(managerEscuderiaId);
         
-        // Convertimos la lista de Entidades a una lista de DTOs de respuesta usando Java 21 Streams [cite:
+        // Convertimos la lista de Entidades a una lista de DTOs de respuesta usando Java 21 Streams 
         return pilotos.stream()
                 .map(pilotoMapper::toResponseDTO)
                 .toList();
     }
 
-    // 2. CONSULTAR UN PILOTO ESPECÍFICO POR ID [ci
+    // 2. CONSULTAR UN PILOTO ESPECÍFICO POR ID 
     @Transactional(readOnly = true)
     public PilotoResponseDTO obtenerPilotoPorId(Long id, Long managerEscuderiaId) {
         // Buscamos asegurando el aislamiento: ID del piloto + ID de la escudería del mánager
@@ -118,7 +117,7 @@ public class PilotoService {
         return pilotoMapper.toResponseDTO(piloto);
     }
 
-    // 3. ACTUALIZAR UN PILOTO EXISTENTE [ci
+    // 3. ACTUALIZAR UN PILOTO EXISTENTE 
     @Transactional
     public PilotoResponseDTO actualizarPiloto(Long id, PilotoRequestDTO dto, Long managerEscuderiaId) {
         // Aislamiento: Primero verificamos que el piloto exista y sea de nuestra escudería

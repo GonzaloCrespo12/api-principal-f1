@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/security/JwtFilter.java
 package com.f1.api_principal.security;
 
 import jakarta.servlet.FilterChain;
@@ -26,12 +25,12 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) 
             throws ServletException, IOException {
         
-        // 1. Buscamos el token en la cabecera "Authorization"
+        // Buscamos el token en la cabecera "Authorization"
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String username = null;
 
-        // 2. Verificamos que venga con el formato correcto (Bearer eyJ...)
+        // Verificamos que venga con el formato correcto (Bearer eyJ...)
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7); // Cortamos la palabra "Bearer "
             try {
@@ -41,17 +40,17 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // 3. Si encontramos un usuario y no está autenticado aún en este ciclo
+        // Si encontramos un usuario y no está autenticado aún en este ciclo de petición, validamos el token y lo autenticamos
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtil.validarToken(token)) {
-                // Creamos el pase oficial de Spring Security y lo guardamos en el Contexto
+                // Creamos el pase oficial de Spring Security y lo guardamos en el Contexto de Seguridad
                 UsernamePasswordAuthenticationToken authToken = 
                         new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // 4. Dejamos que la petición siga su curso (hacia el Controller)
+        // Dejamos que la petición siga su curso (hacia el Controller)
         filterChain.doFilter(request, response);
     }
 }

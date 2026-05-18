@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/controller/CarreraController.java
 package com.f1.api_principal.controller;
 
 import com.f1.api_principal.dto.response.CarreraResponseDTO;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController // Habilita la clase para responder JSON en la web
-@RequestMapping("/api/carreras") // Sustantivo en plural siguiendo la convención REST 
+@RequestMapping("/api/carreras") 
 @RequiredArgsConstructor
 public class CarreraController {
 
@@ -20,7 +19,7 @@ public class CarreraController {
 
     @GetMapping
     public ResponseEntity<List<CarreraResponseDTO>> obtenerCalendario(
-            // Atrapa el ?esSprint=true de la URL. required = false hace que sea opcional.
+            // El parámetro esSprint es opcional, si no se proporciona, se mostrarán todas las carreras
             @RequestParam(required = false) Boolean esSprint) {
         
         List<CarreraResponseDTO> calendario = carreraService.obtenerCalendario(esSprint);

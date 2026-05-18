@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/mapper/NumeroPilotoMapper.java
 package com.f1.api_principal.mapper;
 
 import com.f1.api_principal.dto.response.NumeroPilotoResponseDTO;

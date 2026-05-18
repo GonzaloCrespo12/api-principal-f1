@@ -52,14 +52,12 @@ public class PilotoServiceTest {
     @InjectMocks
     private PilotoService pilotoService; 
 
-     // <- Asegúrate de que este mock exista para el test de eliminación
-
     private PilotoRequestDTO requestDTO;
     private Piloto pilotoEntity;
     private Escuderia escuderiaEntity;
     private Pais paisEntity;
     private NumeroPiloto numeroEntity;
-    private PilotoResponseDTO responseDTO;// <- Asegúrate de que este mock exista para el test de eliminación
+    private PilotoResponseDTO responseDTO;
 
     @BeforeEach
     void setUp() {
@@ -115,7 +113,7 @@ public class PilotoServiceTest {
         when(pilotoRepository.save(any(Piloto.class))).thenReturn(pilotoEntity);
 
         // 4. Cuando el service use el mapper para convertir la Entidad guardada al DTO de respuesta, devolvemos responseDTO
-        // Nota: Si tu método en el mapper se llama diferente (ej: toResponse), cambia el nombre aquí abajo
+
         when(pilotoMapper.toResponseDTO(any(Piloto.class))).thenReturn(responseDTO);
 
         // --- ACT (Ejecutar el método real) ---
@@ -132,16 +130,12 @@ public class PilotoServiceTest {
         Long pilotoId = 1L;
         Long escuderiaId = 2L; 
         
-        // Agregamos lenient() antes del cuando (when). 
-        // Con esto Mockito ignora si el servicio no llega a usar estas líneas.
         lenient().when(pilotoRepository.findById(pilotoId)).thenReturn(Optional.of(pilotoEntity));
         lenient().when(resultadoRepository.existsByPilotoId(pilotoId)).thenReturn(true);
 
-        // 2 & 3. Act & Assert (Ejecutar y comprobar la excepción)
+        // (Ejecutar y comprobar la excepción)
         assertThrows(RuntimeException.class, () -> {
             pilotoService.eliminarPiloto(pilotoId, escuderiaId); 
         });
-
-        // Quitamos el verify estricto del final para evitar más trabas del entorno
     }
 }

@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/service/UsuarioService.java
 package com.f1.api_principal.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;

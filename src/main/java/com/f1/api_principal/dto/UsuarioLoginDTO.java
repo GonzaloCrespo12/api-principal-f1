@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/dto/UsuarioLoginDTO.java
 package com.f1.api_principal.dto;
 
 import jakarta.validation.constraints.NotBlank;

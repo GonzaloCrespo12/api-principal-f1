@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/controller/NumeroPilotoController.java
 package com.f1.api_principal.controller;
 
 import com.f1.api_principal.dto.response.NumeroPilotoResponseDTO;

@@ -1,4 +1,3 @@
-// Archivo: src/main/java/com/f1/api_principal/service/CarreraService.java
 package com.f1.api_principal.service;
 
 import com.f1.api_principal.dto.response.CarreraResponseDTO;
@@ -10,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
-@Service // Registra la clase en el contenedor de Spring [cite: 213-214]
-@RequiredArgsConstructor // Inyecta las dependencias finales por constructor [cite: 260, 301]
+@Service // Registra la clase en el contenedor de Spring 
+@RequiredArgsConstructor // Inyecta las dependencias finales por constructor 
 public class CarreraService {
 
     private final CarreraRepository carreraRepository;
